@@ -6,5 +6,6 @@ For running the computational microscope on your dataset (Suggested):
 
 This file assumes that you are using one of the earlier experiments or using the 3-1-2 structure with increasing variance in rewards.
 
-To run the computational microscope on the data for a particular pid
-  python3 infer_participant_sequences.py <pid> <exp_num> [<block>]
+To run the computational microscope on the data for a particular pid:
+
+  `python3 infer_participant_sequences.py <pid> <exp_num> [<block>]`
