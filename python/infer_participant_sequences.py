@@ -15,8 +15,9 @@ def modify_clicks(click_sequence):
 def get_participant_data(exp_num, pid, block=None):
     data = get_data(exp_num)
     clicks_data = data['mouselab-mdp']
+    print(block)
     if block:
-        clicks_data = clicks_data[clicks_data.pid == pid & clicks_data.block == block]
+        clicks_data = clicks_data[(clicks_data.pid == pid) & (clicks_data.block == block)]
     else:
         clicks_data = clicks_data[clicks_data.pid == pid]
     click_sequence = [q['click']['state']['target'] for q in clicks_data.queries]
@@ -33,6 +34,9 @@ def infer_strategies(click_sequences, envs, pipeline, strategy_space,
 if __name__ == "__main__":
     pid = int(sys.argv[1])
     exp_num = sys.argv[2]
+    block = None
+    if len(sys.argv) > 3:
+        block = sys.argv[3]
 
     strategy_space = pickle_load("data/strategy_space.pkl")
     features = pickle_load("data/microscope_features.pkl")
@@ -55,14 +59,18 @@ if __name__ == "__main__":
 
     # TODO:
     # Get clicks and envs of a particular participant
-    clicks, envs = get_participant_data(exp_num, pid)
+    clicks, envs = get_participant_data(exp_num, pid, block=block)
     S, T = infer_strategies(clicks, envs, pipeline, strategy_space,
                             W, features, normalized_features)
 
     path = f"results/inferred_sequences/{exp_num}"
     create_dir(path)
-    pickle_save(S, f"{path}/{pid}_strategies.pkl")
-    pickle_save(T, f"{path}/{pid}_temperature.pkl")
+    if not block:
+        pickle_save(S, f"{path}/{pid}_strategies.pkl")
+        pickle_save(T, f"{path}/{pid}_temperature.pkl")
+    else:
+        pickle_save(S, f"{path}/{pid}_{block}_strategies.pkl")
+        pickle_save(T, f"{path}/{pid}_{block}_temperature.pkl")
 
 
 

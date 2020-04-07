@@ -9,3 +9,5 @@ This file assumes that you are using one of the earlier experiments or using the
 To run the computational microscope on the data for a particular pid:
 
   `python3 infer_participant_sequences.py <pid> <exp_num> [<block>]`
+
+The results are stored in `python/results/inferred_sequences/<exp_num>`
