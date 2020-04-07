@@ -60,8 +60,11 @@ class Participant():
     def attach_decision_system_properties(self, decision_systems, decision_system_weights,
                                             decision_system_proportions):
         self.decision_systems = decision_systems
-        self.decision_system_weights = np.array([decision_system_weights[s-1] for s in self.strategies])
-        self.decision_system_proportions = np.array([decision_system_proportions[s-1] for s in self.strategies])
+        try:
+            self.decision_system_weights = np.array([decision_system_weights[s-1] for s in self.strategies])
+            self.decision_system_proportions = np.array([decision_system_proportions[s-1] for s in self.strategies])
+        except Exception as e:
+            pass
 
     def attach_clusters(self, cluster_map):
         self.clusters = [cluster_map[s] for s in self.strategies]
@@ -149,9 +152,8 @@ class Experiment():
                     self.participant_strategies, self.participant_temperatures = cm.infer_participant_sequences(self.pids,
                                                 self.planning_data['envs'], self.planning_data['clicks'],
                                                 max_evals=max_evals, show_pids=show_pids)
-                    for pid in participant_strategies:
+                    for pid in self.participant_strategies:
                         self.participants[pid].attach_strategies(self.participant_strategies[pid])
-                        self.participant_strategies[pid] = S
                         pids.append(pid)
         self.pids = pids
 
@@ -354,6 +356,19 @@ class Experiment():
         #     self.infer_strategies(precomputed_strategies=self.participant_strategies)
         #     self.init_decision_system_properties(decision_systems, decision_weights, decision_proportions)
 
+    def get_mean_DSW(self):
+        DSP = []
+        num_trials = self.num_trials
+        for pid in self.pids:
+            decision_systems = self.participants[pid].decision_systems
+            ds_prop = self.participants[pid].decision_system_proportions
+            if len(ds_prop) == num_trials:
+                DSP.append(ds_prop)
+        decision_system_labels = [" ".join([s.capitalize() for s in d.split("_")]) for d in decision_systems]
+        num_decision_systems = len(decision_systems)
+        mean_dsw = np.mean(DSP, axis = 0)
+        return mean_dsw
+
     def plot_average_ds(self, suffix=""):
         DSP = []
         num_trials = self.num_trials
@@ -374,7 +389,7 @@ class Experiment():
         # plt.title("Decision system proportions", fontsize=24)
         plt.ylim(top=np.max(mean_dsw)+0.2)
         plt.legend(prop={'size': 23}, ncol=3, loc='upper center')
-        plt.savefig(f"results/{self.exp_num}_decision_plots_{suffix}.png", bbox_inches='tight')
+        plt.savefig(f"results/{self.exp_num}_decision_plots_{suffix}.pdf", bbox_inches='tight')
 
     def get_proportions(self, strategies, trial_wise=False):
         strategies_list = [strategies[pid] for pid in self.pids]
@@ -396,6 +411,28 @@ class Experiment():
                 strategy_proportions[i] = {k: v/total_v for k, v in strategy_proportions[i].items()}
             strategy_proportions = dict(strategy_proportions)
         return strategy_proportions
+
+    def get_strategy_frequencies(self, strategies, trial_wise=False):
+        strategies_list = [strategies[pid] for pid in self.pids]
+        total_S = []
+        for S in strategies_list:
+            total_S += S
+        if not trial_wise:
+            num_strategies = len(total_S)
+            strategy_counts = Counter(total_S)
+            total = num_strategies
+        else:
+            strategy_counts = defaultdict(lambda: defaultdict(int))
+            for S in strategies_list:
+                for i, s in enumerate(S):
+                    strategy_counts[i][s] += 1
+            total = np.zeros(len(strategy_counts.keys()))
+            for i in strategy_counts.keys():
+                strategy_counts[i] = dict(strategy_counts[i])
+                total_v = sum(list(strategy_counts[i].values()))
+                total[i] = total_v
+            strategy_counts = dict(strategy_counts)
+        return strategy_counts, total
 
     def get_strategy_proportions(self, trial_wise=False):
         if not trial_wise:
@@ -433,7 +470,7 @@ class Experiment():
             self.adjusted_trial_strategy_proportions = adjusted_proportions
         return adjusted_proportions
 
-    def plot_proportions(self, trial_prop, S, title="", suffix="", cluster=False):
+    def plot_proportions(self, trial_prop, S, title="", suffix="", labels=[], cluster=False):
         S_proportions = []
         for t in trial_prop.keys():
             props = []
@@ -447,23 +484,33 @@ class Experiment():
         if cluster:
             prefix = "Cluster"
         for i in range(S_proportions.shape[1]):
-            plt.plot(range(1, S_proportions.shape[0]+1), S_proportions[:, i], label = f"{prefix} {S[i]}", linewidth=3.0)
-        plt.xlabel("Trial Number", fontsize=24)
-        plt.ylabel("Proportion", fontsize=24)
+            if labels:
+                label = labels[i]
+            else:
+                label = f"{prefix} {S[i]}"
+            plt.plot(range(1, S_proportions.shape[0]+1), S_proportions[:, i]*100, label = label, linewidth=3.0)
+        plt.xlabel("Trial Number", fontsize=28)
+        plt.ylabel("Proportion (%)", fontsize=28)
         #plt.title(title, fontsize=24)
-        plt.ylim(top=1.0)
-        plt.tick_params(labelsize=22)
-        plt.legend(prop={'size': 23}, ncol=3, loc='upper center')
-        if cluster:
-            plt.savefig(f"results/{self.exp_num}_cluster_proportions_{suffix}.png", dpi=400, bbox_inches='tight')
+        if not cluster:
+            plt.ylim(top=135)
         else:
-            plt.savefig(f"results/{self.exp_num}_strategy_proportions_{suffix}.png", dpi=400, bbox_inches='tight')
+            plt.ylim(top=110)
+        plt.tick_params(labelsize=22)
+        if cluster:
+            plt.legend(prop={'size': 24}, ncol = 3, loc='upper center')
+        else:
+            plt.legend(prop={'size': 24}, loc='upper center')
+        if cluster:
+            plt.savefig(f"results/{self.exp_num}_cluster_proportions_{suffix}.pdf", bbox_inches='tight')
+        else:
+            plt.savefig(f"results/{self.exp_num}_strategy_proportions_{suffix}.pdf", bbox_inches='tight')
         plt.show()
 
-    def plot_strategy_proportions(self, S, suffix=""):
+    def plot_strategy_proportions(self, S, suffix="", labels = []):
         if not hasattr(self, 'trial_strategy_proportions'):
             self.get_strategy_proportions(trial_wise=True)
-        self.plot_proportions(self.trial_strategy_proportions, S, title="Strategy proportions", suffix=suffix)
+        self.plot_proportions(self.trial_strategy_proportions, S, title="Strategy proportions", suffix=suffix, labels=labels)
     
     ### Emperical validations
     def plot_strategy_scores(self, strategy_scores):
@@ -620,9 +667,9 @@ class Experiment():
             print("\n", dict(self.participant_strategies), "\n")
         self.init_feature_properties(features, normalized_features, strategy_weights)
         self.init_decision_system_properties(decision_systems, W_DS, DS_proportions)
-        clusters = self.get_proportion_clusters(mode=cluster_mode, show_clusters=True, plot=False, 
-                                                n_clusters = n_clusters, max_clusters=max_clusters)
-        print("Clusters:", clusters, "\n")
+        # clusters = self.get_proportion_clusters(mode=cluster_mode, show_clusters=True, plot=False, 
+        #                                         n_clusters = n_clusters, max_clusters=max_clusters)
+        # print("Clusters:", clusters, "\n")
         self.pipeline = self.cm.pipeline
         # acls, random_acls = self.get_acls()
         # mean_acl = np.mean(acls)
