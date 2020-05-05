@@ -18,6 +18,16 @@ if __name__ == "__main__":
     strategy_weights = pickle_load("data/microscope_weights.pkl")
     num_features = len(features)
     exp_pipelines = pickle_load("data/exp_pipelines.pkl")
+    features = pickle_load("data/microscope_features.pkl")
+    decision_systems = pickle_load("data/decision_systems.pkl")
+    feature_systems = pickle_load("data/feature_systems.pkl")
+    decision_system_features = pickle_load("data/decision_system_features.pkl")
+    DS_proportions = pickle_load("data/strategy_decision_proportions.pkl")
+    W_DS = pickle_load("data/strategy_decision_weights.pkl")
+    cluster_map = pickle_load("data/kl_cluster_map.pkl")
+    strategy_scores = pickle_load("data/strategy_scores.pkl")
+    cluster_scores = pickle_load("data/cluster_scores.pkl")
+
     exp_reward_structures = {'increasing_variance': 'high_increasing', 
                             'constant_variance': 'low_constant',
                             'decreasing_variance': 'high_decreasing',
@@ -43,13 +53,20 @@ if __name__ == "__main__":
         exp = Experiment("c2.1", cm=cm, pids=pids, block = block, variance = 2442)
     else:
         exp = Experiment(exp_num, cm=cm, pids=pids, block = block)
-    exp.infer_strategies(max_evals=2, show_pids=True)
 
-    save_path = f"results/inferred_strategies/{reward_structure}"
+    dir_path = f"results/inferred_strategies/{reward_structure}"
     if block:
-        save_path += f"_{block}"
-    create_dir(save_path)
-    strategies = exp.participant_strategies
-    temperatures = exp.participant_temperatures
-    pickle_save(strategies, f"{save_path}/strategies.pkl")
-    pickle_save(temperatures, f"{save_path}/temperatures.pkl")
+        dir_path += f"_{block}"
+    
+    try:
+        strategies = pickle_load(f"{dir_path}/strategies.pkl")
+        temperatures = pickle_load(f"{dir_path}/temperatures.pkl")
+    except Exception as e:
+        print(e)
+        exit()
+
+    exp.summarize(features, normalized_features, strategy_weights, 
+                decision_systems, W_DS, DS_proportions, strategy_scores, 
+                cluster_scores, cluster_map, precomputed_strategies=strategies,
+                precomputed_temperatures=temperatures,
+                show_pids=False)

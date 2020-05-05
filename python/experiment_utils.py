@@ -52,6 +52,9 @@ class Participant():
     def attach_strategies(self, strategies):
         self.strategies = strategies
 
+    def attach_temperature(self, temperature):
+        self.temperature = temperature
+
     def attach_feature_properties(self, features, normalized_features, strategy_weights):
         self.features = features
         self.normalized_features = normalized_features
@@ -89,6 +92,7 @@ class Experiment():
         self.init_participants()
         self.init_planning_data()
         self.participant_strategies = {}
+        self.participant_temperatures = {}
     
     def init_participants(self):
         participants_data = self.data['participants']
@@ -134,16 +138,20 @@ class Experiment():
         cm = self.cm
         pids = []
         if precomputed_strategies:
-            for pid in self.pids:
+            for pid in precomputed_strategies.keys():
                 if show_pids:
                     print(pid)
-                    try:
-                        S = precomputed_strategies[pid]
-                        self.participants[pid].attach_strategies(S)
-                        self.participant_strategies[pid] = S
-                        pids.append(pid)
-                    except KeyError:
-                        print(f"Strategies for {pid} not found. Skipping adding strategy data")
+                try:
+                    S = precomputed_strategies[pid]
+                    self.participants[pid].attach_strategies(S)
+                    self.participant_strategies[pid] = S  
+                    if precomputed_temperatures:
+                        T = precomputed_temperatures[pid]
+                        self.participants[pid].attach_temperature(T)
+                        self.participant_temperatures[pid] = T
+                    pids.append(pid)
+                except KeyError:
+                    print(f"Strategies for {pid} not found. Skipping adding strategy data")
         else:
             if not cm:
                 raise ValueError("Computational Microscope not found.")
@@ -153,6 +161,7 @@ class Experiment():
                                             max_evals=max_evals, show_pids=show_pids)
                 for pid in self.participant_strategies:
                     self.participants[pid].attach_strategies(self.participant_strategies[pid])
+                    self.participants[pid].attach_temperature(self.participant_temperatures[pid])
                     pids.append(pid)
         self.pids = pids
 
@@ -204,6 +213,10 @@ class Experiment():
         return significant_transitions, insignificant_transitions, alpha_sidak
     
     def strategy_transitions_chi2(self, trial_wise=False, clusters=False, print_results=True):
+        if clusters:
+            print("Cluster transitions")
+        else:
+            print("Strategy transitions")
         condition_wise_pids = defaultdict(list)
         for pid in self.pids:
             condition_wise_pids[self.participants[pid].condition].append(pid)
@@ -228,6 +241,10 @@ class Experiment():
     # The strategy scores should vary with reward structure
     # Catch error when there is no significant transition 
     def performance_transitions_chi2(self, strategy_scores=None, cluster_scores=None, trial_wise=False):
+        if cluster_scores:
+            print("Cluster Transitions: Performance statistics")
+        else:
+            print("Strategy Transitions: Performance statistics")
         performance_results = defaultdict(lambda: defaultdict())
         if strategy_scores:
             scores = strategy_scores
@@ -252,6 +269,10 @@ class Experiment():
 
     # Should we also add constant case?
     def frequency_transitions_chi2(self, clusters=False, trial_wise=False):
+        if clusters:
+            print("Cluster Transitions: Frequency statistics")
+        else:
+            print("Strategy Transitions: Frequency statistics")
         frequency_results = defaultdict(lambda: defaultdict())
         chi2_results = self.strategy_transitions_chi2(trial_wise=trial_wise, clusters=clusters, print_results=False)
         for condition_pair in chi2_results.keys():
@@ -685,8 +706,12 @@ class Experiment():
                     show_pids=True,
                     show_strategies=False,
                     precomputed_strategies = None,
+                    precomputed_temperatures= None
                     ):
-        self.infer_strategies(precomputed_strategies = precomputed_strategies, max_evals=max_evals, show_pids=show_pids)
+        self.infer_strategies(precomputed_strategies = precomputed_strategies,
+                              precomputed_temperatures = precomputed_temperatures,
+                            max_evals=max_evals, show_pids=show_pids)
+        print(self.pids)
         if show_strategies:
             print("\n", dict(self.participant_strategies), "\n")
         self.init_feature_properties(features, normalized_features, strategy_weights)
@@ -703,20 +728,14 @@ class Experiment():
         
         self.plot_average_ds()
 
-        print("Strategy transitions")
-        self.strategy_transitions_chi2()
-        print("Strategy Transitions: Performance statistics")
-        self.performance_transitions_chi2(strategy_scores = strategy_scores)
-        print("Strategy Transitions: Frequency statistics")
-        self.frequency_transitions_chi2()
+        # self.strategy_transitions_chi2()
+        # self.performance_transitions_chi2(strategy_scores = strategy_scores)
+        # self.frequency_transitions_chi2()
 
         self.init_strategy_clusters(cluster_map)
-        print("Cluster transitions")
-        self.strategy_transitions_chi2(clusters=True)
-        print("Cluster Transitions: Performance statistics")
-        self.performance_transitions_chi2(cluster_scores = cluster_scores)
-        print("Cluster Transitions: Frequency statistics")
-        self.frequency_transitions_chi2(clusters=True)
+        # self.strategy_transitions_chi2(clusters=True)
+        # self.performance_transitions_chi2(cluster_scores = cluster_scores)
+        # self.frequency_transitions_chi2(clusters=True)
         
         S = self.get_top_k_strategies(k=5)
         self.plot_strategy_proportions(S)
