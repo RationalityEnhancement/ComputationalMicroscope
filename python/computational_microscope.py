@@ -166,7 +166,6 @@ class ComputationalMicroscope():
             best_params = fmin(fn=nll, space = parameter_space, algo=algo, trials=trials, max_evals=max_evals-1)
             self.set_strategy_T(best_params['strategy_T'])
         strategies, nll, weights = self.apply_microscope(click_sequences, envs)
-        print(strategies)
         return strategies, nll, weights, self.strategy_T
 
     def infer_participant_sequences(self, pids, p_envs, p_clicks, max_evals = 100, fit_strategy_temperature=True, show_pids=True):

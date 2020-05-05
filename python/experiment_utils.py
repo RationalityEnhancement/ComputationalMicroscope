@@ -130,31 +130,30 @@ class Experiment():
         self.planning_data = dict(self.planning_data)
 
     def infer_strategies(self, precomputed_strategies=None, precomputed_temperatures=None, max_evals=30, show_pids=True):
-        #Add precomputed temperatures
         leftout_pids = []
         cm = self.cm
         pids = []
-        for pid in self.pids:
-            if show_pids:
-                print(pid)
-            if precomputed_strategies:
-                try:
-                    S = precomputed_strategies[pid]
-                    self.participants[pid].attach_strategies(S)
-                    self.participant_strategies[pid] = S
-                    pids.append(pid)
-                except KeyError:
-                    print(f"Strategies for {pid} not found. Skipping adding strategy data")
-            else:
-                if not cm:
-                    raise ValueError("Computational Microscope not found.")
-                else:
-                    self.participant_strategies, self.participant_temperatures = cm.infer_participant_sequences(self.pids,
-                                                self.planning_data['envs'], self.planning_data['clicks'],
-                                                max_evals=max_evals, show_pids=show_pids)
-                    for pid in self.participant_strategies:
-                        self.participants[pid].attach_strategies(self.participant_strategies[pid])
+        if precomputed_strategies:
+            for pid in self.pids:
+                if show_pids:
+                    print(pid)
+                    try:
+                        S = precomputed_strategies[pid]
+                        self.participants[pid].attach_strategies(S)
+                        self.participant_strategies[pid] = S
                         pids.append(pid)
+                    except KeyError:
+                        print(f"Strategies for {pid} not found. Skipping adding strategy data")
+        else:
+            if not cm:
+                raise ValueError("Computational Microscope not found.")
+            else:
+                self.participant_strategies, self.participant_temperatures = cm.infer_participant_sequences(self.pids,
+                                            self.planning_data['envs'], self.planning_data['clicks'],
+                                            max_evals=max_evals, show_pids=show_pids)
+                for pid in self.participant_strategies:
+                    self.participants[pid].attach_strategies(self.participant_strategies[pid])
+                    pids.append(pid)
         self.pids = pids
 
     def get_transition_frequencies(self, trial_wise = False, pids=None, clusters=False):
