@@ -357,17 +357,27 @@ class Experiment():
         #     self.init_decision_system_properties(decision_systems, decision_weights, decision_proportions)
 
     def get_mean_DSW(self):
-        DSP = []
+        DSW = []
         num_trials = self.num_trials
         for pid in self.pids:
             decision_systems = self.participants[pid].decision_systems
             ds_prop = self.participants[pid].decision_system_proportions
             if len(ds_prop) == num_trials:
-                DSP.append(ds_prop)
+                DSW.append(ds_prop)
         decision_system_labels = [" ".join([s.capitalize() for s in d.split("_")]) for d in decision_systems]
         num_decision_systems = len(decision_systems)
-        mean_dsw = np.mean(DSP, axis = 0)
+        mean_dsw = np.mean(DSW, axis = 0)
         return mean_dsw
+
+    def get_DSW(self):
+        DSW = []
+        num_trials = self.num_trials
+        for pid in self.pids:
+            decision_systems = self.participants[pid].decision_systems
+            ds_prop = self.participants[pid].decision_system_proportions
+            if len(ds_prop) == num_trials:
+                DSW.append(ds_prop)
+        return DSW
 
     def plot_average_ds(self, suffix=""):
         DSP = []
@@ -470,12 +480,24 @@ class Experiment():
             self.adjusted_trial_strategy_proportions = adjusted_proportions
         return adjusted_proportions
 
-    def plot_proportions(self, trial_prop, S, title="", suffix="", labels=[], cluster=False):
+    def plot_proportions(self, trial_prop, S, title="", suffix="", labels=[], cluster=False,
+                        combine_other=False):
         S_proportions = []
+        if cluster and 13 in S:
+            index = S.index(13)
+        else:
+            index = None
         for t in trial_prop.keys():
             props = []
             for s in S:
-                props.append(trial_prop[t].get(s, 0))
+                if not index or (index and s != 13):
+                    props.append(trial_prop[t].get(s, 0))
+            if index:
+                if combine_other:
+                    total_prop = np.sum(props)
+                    props.insert(index, 1-total_prop)
+                else:
+                    props.insert(index, trial_prop[t].get(13, 0))
             S_proportions.append(props)
         S_proportions = np.array(S_proportions)
         #labels = ["Myopic Forward Planning", "Goal setting with additional immediate exploration", "Postive satisificing with two additional nodes", "Exploring parent of best leaf", "No planning", "Optimal Planning"]
@@ -495,10 +517,10 @@ class Experiment():
         if not cluster:
             plt.ylim(top=135)
         else:
-            plt.ylim(top=110)
+            plt.ylim(top=140)
         plt.tick_params(labelsize=22)
         if cluster:
-            plt.legend(prop={'size': 24}, ncol = 3, loc='upper center')
+            plt.legend(prop={'size': 24}, loc='upper center')
         else:
             plt.legend(prop={'size': 24}, loc='upper center')
         if cluster:
@@ -507,7 +529,7 @@ class Experiment():
             plt.savefig(f"results/{self.exp_num}_strategy_proportions_{suffix}.pdf", bbox_inches='tight')
         plt.show()
 
-    def plot_strategy_proportions(self, S, suffix="", labels = []):
+    def plot_strategy_proportions(self, S, suffix="", labels = None):
         if not hasattr(self, 'trial_strategy_proportions'):
             self.get_strategy_proportions(trial_wise=True)
         self.plot_proportions(self.trial_strategy_proportions, S, title="Strategy proportions", suffix=suffix, labels=labels)
@@ -572,10 +594,13 @@ class Experiment():
             
         return adjusted_proportions
     
-    def plot_cluster_proportions(self, C):
+    def plot_cluster_proportions(self, C, suffix="", labels=None,
+                                combine_other=False):
         if not hasattr(self, 'trial_cluster_proportions'):
             self.get_cluster_proportions(trial_wise=True)
-        self.plot_proportions(self.trial_cluster_proportions, C, title="Cluster Proportions", cluster=True)
+        self.plot_proportions(self.trial_cluster_proportions, C, title="Cluster Proportions",
+                            suffix = suffix, labels=labels, cluster=True,
+                            combine_other=combine_other)
     
     def attach_pipeline(self, pipeline):
         self.pipeline = pipeline
