@@ -205,7 +205,6 @@ if __name__ == "__main__":
     branching = branchings[exp_num]
     reward_function = construct_reward_function(reward_levels['high_increasing'], 'categorical')
     pipeline = construct_repeated_pipeline(branching, reward_function, num_simulations)
-    normalized_features = get_normalized_features("high_increasing")
     num_strategies = 89
     strategy_space = list(range(1, num_strategies+1))
     problematic_strategies = [19, 20, 25, 35, 38, 52, 68, 77, 81, 83]

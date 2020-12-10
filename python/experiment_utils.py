@@ -405,12 +405,13 @@ class Experiment():
         for pid in self.pids:
             decision_systems = self.participants[pid].decision_systems
             ds_prop = self.participants[pid].decision_system_proportions
-            if len(ds_prop) == num_trials:
-                DSP.append(ds_prop)
+            DSP.append(ds_prop)
         decision_system_labels = [" ".join([s.capitalize() for s in d.split("_")]) for d in decision_systems]
+        decision_system_labels = ["Mental effort avoidance", "Model-based Metareasoning", "Model-free values and heuristics",
+                                "Pavlovian", "Satisficing and stopping"]
         num_decision_systems = len(decision_systems)
         mean_dsw = np.mean(DSP, axis = 0)
-        plt.figure(figsize=(15,10))
+        plt.figure(figsize=(16,10))
         for i in range(num_decision_systems):
             plt.plot(range(1, num_trials+1), mean_dsw[:, i], label = decision_system_labels[i], linewidth=3.0)
         plt.xlabel("Trial Number", size=24)
@@ -418,7 +419,7 @@ class Experiment():
         plt.ylabel("Relative Influence of Decision System", fontsize=24)
         # plt.title("Decision system proportions", fontsize=24)
         plt.ylim(top=np.max(mean_dsw)+0.2)
-        plt.legend(prop={'size': 23}, ncol=3, loc='upper center')
+        plt.legend(prop={'size': 22}, ncol=2, loc='upper center')
         plt.savefig(f"results/{self.exp_num}_decision_plots_{suffix}.pdf", bbox_inches='tight')
 
     def get_proportions(self, strategies, trial_wise=False):
@@ -521,7 +522,7 @@ class Experiment():
             S_proportions.append(props)
         S_proportions = np.array(S_proportions)
         #labels = ["Myopic Forward Planning", "Goal setting with additional immediate exploration", "Postive satisificing with two additional nodes", "Exploring parent of best leaf", "No planning", "Optimal Planning"]
-        plt.figure(figsize=(15,10))
+        plt.figure(figsize=(16,10))
         prefix = "Strategy"
         if cluster:
             prefix = "Cluster"
@@ -535,14 +536,14 @@ class Experiment():
         plt.ylabel("Proportion (%)", fontsize=28)
         #plt.title(title, fontsize=24)
         if not cluster:
-            plt.ylim(top=135)
+            plt.ylim(top=95)
         else:
-            plt.ylim(top=140)
+            plt.ylim(top=95)
         plt.tick_params(labelsize=22)
         if cluster:
-            plt.legend(prop={'size': 24}, loc='upper center')
+            plt.legend(prop={'size': 22}, loc='upper center', ncol=2)
         else:
-            plt.legend(prop={'size': 24}, loc='upper center')
+            plt.legend(prop={'size': 22}, loc='upper center', ncol=2)
         if cluster:
             plt.savefig(f"results/{self.exp_num}_cluster_proportions_{suffix}.pdf", bbox_inches='tight')
         else:
@@ -728,9 +729,9 @@ class Experiment():
         
         self.plot_average_ds()
 
-        # self.strategy_transitions_chi2()
-        # self.performance_transitions_chi2(strategy_scores = strategy_scores)
-        # self.frequency_transitions_chi2()
+        self.strategy_transitions_chi2()
+        self.performance_transitions_chi2(strategy_scores = strategy_scores)
+        self.frequency_transitions_chi2()
 
         self.init_strategy_clusters(cluster_map)
         # self.strategy_transitions_chi2(clusters=True)
