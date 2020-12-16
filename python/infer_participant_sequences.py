@@ -11,18 +11,19 @@ def modify_clicks(click_sequence):
         modified_clicks.append([int(c) for c in clicks] + [0])
     return modified_clicks
 
-# Change this to change which data is loaded
 def get_participant_data(exp_num, pid, block=None):
     data = get_data(exp_num)
     clicks_data = data['mouselab-mdp']
-    print(block)
     if block:
         clicks_data = clicks_data[(clicks_data.pid == pid) & (clicks_data.block == block)]
     else:
         clicks_data = clicks_data[clicks_data.pid == pid]
     click_sequence = [q['click']['state']['target'] for q in clicks_data.queries]
     click_sequence = modify_clicks(click_sequence)
-    envs = [[0]+sr[1:] for sr in clicks_data.stateRewards]
+    if 'stateRewards' in clicks_data.columns:
+        envs = [[0]+sr[1:] for sr in clicks_data.stateRewards]
+    elif 'state_rewards' in clicks_data.columns:
+        envs = [[0]+sr[1:] for sr in clicks_data.state_rewards]
     return click_sequence, envs
 
 def infer_strategies(click_sequences, envs, pipeline, strategy_space,
@@ -43,19 +44,33 @@ if __name__ == "__main__":
     strategy_weights = pickle_load("data/microscope_weights.pkl")
     num_features = len(features)
     exp_pipelines = pickle_load("data/exp_pipelines.pkl")
-    exp_reward_structures = {'v1.0': 'high_increasing', 'F1': 'high_increasing', 
-                            'c1.1': 'low_constant', 'T1.1': 'large_increasing'}
-    
-    # Defaults for 312 increasing variance task
-    reward_structure = "high_increasing"
-    pipeline = [exp_pipelines["v1.0"][0]]*100
-    
-    if exp_num in exp_pipelines:
-        reward_structure = exp_reward_structures[exp_num]
-        pipeline = exp_pipelines[exp_num]
 
+    reward_structure = "increasing_variance" #default
+
+    exp_reward_structures = {'increasing_variance': 'high_increasing', 
+                            'constant_variance': 'low_constant',
+                            'decreasing_variance': 'high_decreasing',
+                            'transfer_task': 'large_increasing'}
+    
+    reward_exps = {"increasing_variance": "v1.0",
+                  "decreasing_variance": "c2.1_dec",
+                  "constant_variance": "c1.1",
+                  "transfer_task": "T1.1"}
+
+    exp_reward_types = {v:k for k,v in reward_exps.items()}
+    if exp_num in exp_reward_types:
+        reward_structure = exp_reward_structures[exp_reward_types[exp_num]]
+
+    #exp_num = reward_exps[reward_structure]
+    # if exp_num not in exp_pipelines:
+    #     raise(ValueError, "Reward structure not found.")
+    pipeline = exp_pipelines["v1.0"] #default
+    if exp_num in exp_pipelines:
+        pipeline = exp_pipelines[exp_num]
+    pipeline = [pipeline[0] for _ in range(100)]
     normalized_features = get_normalized_features(reward_structure)
     W = get_modified_weights(strategy_space, strategy_weights)
+    cm = ComputationalMicroscope(pipeline, strategy_space, W, features, normalized_features=normalized_features)
 
     # TODO:
     # Get clicks and envs of a particular participant
