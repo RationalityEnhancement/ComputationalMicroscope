@@ -1,12 +1,10 @@
 import sys
 import numpy as np
-import mpmath as mp
 from generic_mouselab import GenericMouselabEnv
-from learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
+from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
                     get_modified_weights
-from sequence_utils import get_clicks, compute_log_likelihood
-from scipy.special import logsumexp, softmax
-from joblib import load
+from sequence_utils import compute_log_likelihood
+
 
 def get_strategy_weights(weights_path, num_features, num_strategies):
     strategy_weights = np.zeros((num_strategies, num_features))

@@ -9,7 +9,7 @@ graphviz==0.10.1
 mpmath==1.1.0
 imageio==2.6.1
 rpy2==2.9.4
-pandas==0.24.2
+pandas
 scipy==1.4.1
 joblib==0.13.2
 numba==0.45.1

@@ -1,8 +1,6 @@
-import gym
-from generic_mouselab import GenericMouselabEnv
 from random import shuffle, choice
 from queue import PriorityQueue
-from modified_mouselab import TrialSequence, reward_val, approx_max, approx_min
+from modified_mouselab import TrialSequence, approx_max
 from numpy import argsort
 
 """ This file contains the 89 algorithmic strategies implemented for
@@ -1497,7 +1495,7 @@ def leaves_middle_subtree(trial):
     return [node.label for node in trial.observed_nodes] + [0]
 
 if __name__ == "__main__":
-    from learning_utils import Participant
+    from python.utils.learning_utils import Participant
     p = Participant(exp_num='T1.1', pid=1,
                     feature_criterion='normalize', excluded_trials=list(range(11)))
     trials = p.envs

@@ -1,22 +1,12 @@
-import os
 import sys
 import numpy as np
 from collections import defaultdict
 from joblib import load
-from scipy.special import softmax
-from modified_mouselab import TrialSequence, reward_val, normal_reward_val
-from learning_utils import generate_small_envs, pickle_load, pickle_save, get_normalized_features, construct_reward_function, reward_levels, \
-                            reward_type, construct_repeated_pipeline
-from sequence_utils import get_clicks, compute_log_likelihood, compute_trial_features, compute_trial_feature_log_likelihood
-from planning_strategies import strategy_dict
-from random import shuffle
-from numpy.random import choice
-import pandas as pd
-from hyperopt import hp, fmin, tpe, Trials
-from functools import partial
-import scipy.linalg as LA
-from sklearn.metrics import confusion_matrix
-import time
+from modified_mouselab import TrialSequence
+from python.utils.learning_utils import pickle_load, construct_reward_function, reward_levels, \
+    construct_repeated_pipeline
+from sequence_utils import compute_trial_features, compute_trial_feature_log_likelihood
+from hyperopt import hp, fmin, tpe
 from hyperopt.fmin import generate_trials_to_calculate
 
 # To ignore warnings of the computational microscope

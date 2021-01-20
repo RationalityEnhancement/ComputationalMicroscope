@@ -1,31 +1,23 @@
-import os
-import gym
-import mlmdp
 import torch
-import numpy as np
 import scipy as sp
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import mpmath as mp
 import seaborn as sns
-import hyperopt
 import inspect
 from torch import autograd
 from torch.autograd import Variable
-from learning_utils import *
+from python.utils.learning_utils import *
 from torch.distributions import Categorical
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from hyperopt import hp, fmin, tpe, Trials
 from functools import partial
 from generic_mouselab import GenericMouselabEnv
-from modified_mouselab import normal_reward_val, reward_val
 from sequence_utils import compute_log_likelihood, get_clicks
-from scipy.integrate import quad
 from scipy.stats import norm
 from scipy.special import logsumexp
-from numba import jit
 from functools import lru_cache
 from planning_strategies import strategy_dict
 from math import sqrt

@@ -1,9 +1,8 @@
 import sys
-import numpy as np
-from learning_utils import pickle_load, pickle_save, get_normalized_features,\
+from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features,\
                             get_modified_weights, create_dir
 from computational_microscope import ComputationalMicroscope
-from analysis_utils import get_data
+from python.utils.utils import get_data
 
 def modify_clicks(click_sequence):
     modified_clicks = []
@@ -86,6 +85,3 @@ if __name__ == "__main__":
     else:
         pickle_save(S, f"{path}/{pid}_{block}_strategies.pkl")
         pickle_save(T, f"{path}/{pid}_{block}_temperature.pkl")
-
-
-

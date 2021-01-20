@@ -2,11 +2,10 @@ import numpy as np
 import random
 from collections import defaultdict
 from functools import lru_cache
-from scipy.special import logsumexp
 from statistics import mean
 from toolz import get
 from typing import List
-from learning_utils import get_normalized_feature_values
+from python.utils.learning_utils import get_normalized_feature_values
 from distributions import sample, Normal, Categorical
 
 """ This file defines the node, trial and trial sequence class for the 

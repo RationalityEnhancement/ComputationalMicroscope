@@ -1,10 +1,8 @@
 import sys
-import numpy as np
-from analysis_utils import get_data
-from learning_utils import pickle_load, pickle_save, get_normalized_features,\
-                            get_modified_weights, create_dir
+from python.utils.learning_utils import pickle_load, get_normalized_features,\
+                            get_modified_weights
 from computational_microscope import ComputationalMicroscope
-from experiment_utils import Experiment
+from python.utils.utils import Experiment
 
 if __name__ == "__main__":
     reward_structure = sys.argv[1]
