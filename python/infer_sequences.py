@@ -1,13 +1,12 @@
 import sys
-from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features, \
+from learning_utils import pickle_load, pickle_save, get_normalized_features, \
     get_modified_weights, create_dir
 from computational_microscope import ComputationalMicroscope
-from python.utils.utils import Experiment
+from experiment_utils import Experiment
 
 if __name__ == "__main__":
-    reward_structure = sys.argv[1] #increasing_variance, decreasing_variance
-    print(reward_structure)
-    #reward_structure = "increasing_variance"
+    #reward_structure = sys.argv[1] #increasing_variance, decreasing_variance
+    reward_structure = "constant_variance"
     block = None
     if len(sys.argv) > 2:
         block = sys.argv[2]

@@ -1,6 +1,6 @@
 import os
 from graphviz import Digraph
-from python.utils.utils import Experiment
+from python.utils import Experiment
 from modified_mouselab import TrialSequence
 import imageio
 import shutil

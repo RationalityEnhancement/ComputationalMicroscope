@@ -1,6 +1,6 @@
 import sys
 from generic_mouselab import GenericMouselabEnv
-from python.utils.learning_utils import pickle_load, pickle_save, create_dir
+from python.learning_utils import pickle_load, pickle_save, create_dir
 
 
 def gen_envs(pipeline):
@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     exp_pipelines = pickle_load("data/exp_pipelines.pkl")
     exp_reward_structures = {'v1.0': 'high_increasing', 'F1': 'high_increasing', 
-                            'c1.1': 'low_constant', 'T1.1': 'large_increasing'}
+                            'c1.1_old': 'low_constant', 'T1.1': 'large_increasing'}
 
     # Defaults for 312 increasing variance task
     reward_structure = "high_increasing"

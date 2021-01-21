@@ -1,8 +1,8 @@
 import sys
-from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features,\
+from python.learning_utils import pickle_load, pickle_save, get_normalized_features,\
                             get_modified_weights, create_dir
 from computational_microscope import ComputationalMicroscope
-from python.utils.utils import Experiment
+from python.utils import Experiment
 
 if __name__ == "__main__":
     pid = int(sys.argv[1])
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     strategy_weights = pickle_load("data/microscope_weights.pkl")
     num_features = len(features)
     exp_pipelines = pickle_load("data/exp_pipelines.pkl")
-    exp_reward_structures = {'v1.0': 'high_increasing', 'F1': 'high_increasing', 'c1.1': 'low_constant', 'T1.1': 'large_increasing'}
+    exp_reward_structures = {'v1.0': 'high_increasing', 'F1': 'high_increasing', 'c1.1_old': 'low_constant', 'T1.1': 'large_increasing'}
 
     if mod_exp_num not in exp_pipelines:
         if mod_exp_num not in  ["c2.1_inc", "c2.1_dec"]:

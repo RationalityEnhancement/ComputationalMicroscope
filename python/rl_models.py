@@ -8,7 +8,7 @@ import seaborn as sns
 import inspect
 from torch import autograd
 from torch.autograd import Variable
-from python.utils.learning_utils import *
+from python.learning_utils import *
 from torch.distributions import Categorical
 from abc import ABC, abstractmethod
 from collections import defaultdict

@@ -1,8 +1,8 @@
 import sys
-from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features,\
+from python.learning_utils import pickle_load, pickle_save, get_normalized_features,\
                             get_modified_weights, create_dir
 from computational_microscope import ComputationalMicroscope
-from python.utils.utils import get_data
+from python.utils import get_data
 
 def modify_clicks(click_sequence):
     modified_clicks = []
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     
     reward_exps = {"increasing_variance": "v1.0",
                   "decreasing_variance": "c2.1_dec",
-                  "constant_variance": "c1.1",
+                  "constant_variance": "c1.1_old",
                   "transfer_task": "T1.1"}
 
     exp_reward_types = {v:k for k,v in reward_exps.items()}

@@ -2,7 +2,7 @@
 import sys
 from condor_utils import create_sub_file, submit_sub_file
 
-exp_nums = ["v1.0", "c1.1", "c2.1_dec", "T1.1"]
+exp_nums = ["v1.0", "c1.1_old", "c2.1_dec", "T1.1"]
 num_simulations = 10000
 for exp_num in exp_nums:
     for s_s in range(90):

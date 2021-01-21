@@ -8,7 +8,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
 from scipy.stats import gamma
-from python.utils.utils import get_data
+from analysis_utils import get_data
 from distributions import Categorical, Normal
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy.cluster.hierarchy import fcluster, linkage, dendrogram
@@ -23,7 +23,7 @@ const_var_values = [[-10, -5, 5, 10]]
 reward_levels = {'high_increasing': level_values[1:], 'high_decreasing': level_values[1:][::-1],
                 'low_constant': const_var_values*3, 'large_increasing': list(zip(np.zeros(5), [1,2,4,8,32]))}
 
-reward_type = {'F1': 'categorical', 'c1.1': 'categorical', 'c2.1': 'categorical', 'T1.1': 'normal',
+reward_type = {'F1': 'categorical', 'c1.1_old': 'categorical', 'c2.1': 'categorical', 'T1.1': 'normal',
                 'v1.0': 'categorical'}
 
 num_strategies = 89
@@ -57,7 +57,7 @@ def create_dir(file_path):
         os.makedirs(file_path)
 
 
-implemented_features = pickle_load(f"../data/implemented_features.pkl")
+implemented_features = pickle_load(f"data/implemented_features.pkl")
 
 
 def pickle_save(obj, file_path):

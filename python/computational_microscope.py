@@ -3,7 +3,7 @@ import numpy as np
 from collections import defaultdict
 from joblib import load
 from modified_mouselab import TrialSequence
-from python.utils.learning_utils import pickle_load, construct_reward_function, reward_levels, \
+from learning_utils import pickle_load, construct_reward_function, reward_levels, \
     construct_repeated_pipeline
 from sequence_utils import compute_trial_features, compute_trial_feature_log_likelihood
 from hyperopt import hp, fmin, tpe
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     strategy_weights = load("data/microscope_weights.pkl")
     strategy_distances = pickle_load("data/L2_distances.pkl")
     exp_num = "F1"
-    branchings = {"v1.0": [3, 1, 2], "F1": [3, 1, 2], "T1.1": [3, 1, 1, 2, 3], 'c1.1': [3, 1, 2], 'c2.1': [3, 1, 2]}
+    branchings = {"v1.0": [3, 1, 2], "F1": [3, 1, 2], "T1.1": [3, 1, 1, 2, 3], 'c1.1_old': [3, 1, 2], 'c2.1': [3, 1, 2]}
     branching = branchings[exp_num]
     reward_function = construct_reward_function(reward_levels['high_increasing'], 'categorical')
     pipeline = construct_repeated_pipeline(branching, reward_function, num_simulations)

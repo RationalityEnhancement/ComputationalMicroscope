@@ -1,8 +1,8 @@
 import sys
-from python.utils.learning_utils import pickle_load, get_normalized_features,\
+from learning_utils import pickle_load, get_normalized_features,\
                             get_modified_weights
 from computational_microscope import ComputationalMicroscope
-from python.utils.utils import Experiment
+from experiment_utils import Experiment
 
 if __name__ == "__main__":
     reward_structure = sys.argv[1]
@@ -39,19 +39,19 @@ if __name__ == "__main__":
     exp_num = reward_exps[reward_structure]
     if exp_num not in exp_pipelines:
         raise(ValueError, "Reward structure not found.")
-    
+
     pipeline = exp_pipelines[exp_num]
     pipeline = [pipeline[0] for _ in range(100)]
 
     normalized_features = get_normalized_features(exp_reward_structures[reward_structure])
     W = get_modified_weights(strategy_space, strategy_weights)
     cm = ComputationalMicroscope(pipeline, strategy_space, W, features, normalized_features=normalized_features)
+
     pids = None
     if exp_num == "c2.1_dec":
         exp = Experiment("c2.1", cm=cm, pids=pids, block = block, variance = 2442)
     else:
         exp = Experiment(exp_num, cm=cm, pids=pids, block = block)
-
     dir_path = f"results/inferred_strategies/{reward_structure}"
     if block:
         dir_path += f"_{block}"
@@ -62,8 +62,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         exit()
-
-    exp.summarize(features, normalized_features, strategy_weights, 
+    exp.summarize(features, normalized_features, strategy_weights,
                 decision_systems, W_DS, DS_proportions, strategy_scores, 
                 cluster_scores, cluster_map, precomputed_strategies=strategies,
                 precomputed_temperatures=temperatures,

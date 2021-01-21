@@ -74,10 +74,6 @@ def get_data(version, data_path='../data'):
     return data
 
 
-
-
-
-
 @curry
 def load(file, version=None, func=lambda x: x):
     if not file or type(file) == float:
