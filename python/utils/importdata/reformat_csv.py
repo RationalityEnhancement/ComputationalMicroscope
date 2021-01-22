@@ -222,16 +222,18 @@ keyworddict = {"actionTimes": 3,
                "trial_time": 1,
                "trial_type": 1}
 
-### create mouselab csv
+
 participants_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=2)
 df = save_to_df(participants_dict, name_mapping)
 
-### create participants csv
+# create participants csv
 # get bonus information from mouselab df and add this to the participants csv
 bonus_temp = df.groupby(['pid']).sum()
 data_participants = data[["status", "beginexp", "cond"]]
+data_participants['pid'] = bonus_temp.index
 data_participants['bonus'] = bonus_temp['bonus']
 
-# create csv
+
 split_participants_df_into_conditions(data_participants)
+#data_participants.to_csv("participants.csv", index=True, index_label="pid")
 

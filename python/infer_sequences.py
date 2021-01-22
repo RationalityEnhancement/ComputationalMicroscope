@@ -5,8 +5,8 @@ from computational_microscope import ComputationalMicroscope
 from experiment_utils import Experiment
 
 if __name__ == "__main__":
-    #reward_structure = sys.argv[1] #increasing_variance, decreasing_variance
-    reward_structure = "constant_variance"
+    reward_structure = sys.argv[1] #increasing_variance, decreasing_variance
+    #reward_structure = "constant_variance"
     block = None
     if len(sys.argv) > 2:
         block = sys.argv[2]
