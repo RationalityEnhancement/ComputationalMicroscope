@@ -3,21 +3,34 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 import numpy as np
-from pandas.io.json import json_normalize
 import json
-import itertools
-data = pd.read_csv("data/dataclips.csv", sep=';')
 
-# remove unfinished data entries and reset index, which is also the pid
+
+data = pd.read_csv("data/dataclips2.csv", sep=';')
+
+# remove unfinished data entries
 data['endhit'].replace('', np.nan, inplace=False)
 data.dropna(subset=['endhit'], inplace=True)
 data = data.reset_index(drop=True)
 # data.drop(index=0, inplace=True) #drops first row
 
-# save as participant csv
-data_participants = data[["bonus", "status", "beginexp"]]
-data_participants.to_csv("participants.csv", index=True, index_label="pid")
 
+def split_participants_df_into_conditions(df):
+    """
+    Split the dataframe into three csv for each condition (increasing, decreasing, constant)
+    Args:
+        df: dataframe
+
+    Returns:
+
+    """
+    df_increasing = df[df['cond'] == 0]
+    df_decreasing = df[df['cond'] == 1]
+    df_constant = df[df['cond'] == 2]
+
+    df_increasing.to_csv("../../../data/human/v1.0/participants.csv", sep=",", index=False)
+    df_decreasing.to_csv("../../../data/human/c2.1/participants.csv", sep=",", index=False)
+    df_constant.to_csv("../../../data/human/c1.1/participants.csv", sep=",", index=False)
 
 def flatten(d, sep="_"):
     """
@@ -48,6 +61,14 @@ def flatten(d, sep="_"):
 
 
 def get_queries(dict):
+    """
+    Function to get information on column queries and save as dict
+    Args:
+        dict:
+
+    Returns: queries data as dict
+
+    """
     data = dict.get("data")
     queries_data = []
     for row in data:
@@ -59,6 +80,17 @@ def get_queries(dict):
 
 
 def format_json(df, col_name, keyword_dict, no_trials):
+    """
+    Flattens the csv datastring
+    Args:
+        df:
+        col_name:
+        keyword_dict:
+        no_trials:
+
+    Returns:
+
+    """
     participant_dict = {}
     for index, row in df.iterrows():
         data_dict_raw = json.loads(row[col_name])
@@ -91,6 +123,23 @@ def format_json(df, col_name, keyword_dict, no_trials):
         participant_dict[index] = trial_dict
     return participant_dict
 
+def split_mouselab_df_into_conditions(df):
+    """
+    Split the dataframe into three csv for each condition (increasing, decreasing, constant)
+    Args:
+        df: dataframe
+
+    Returns:
+
+    """
+    df_increasing = df[df['condition'] == 0]
+    df_decreasing = df[df['condition'] == 1]
+    df_constant = df[df['condition'] == 2]
+
+    df_increasing.to_csv("../../../data/human/v1.0/mouselab-mdp.csv", sep=",", index=False)
+    df_decreasing.to_csv("../../../data/human/c2.1/mouselab-mdp.csv", sep=",", index=False)
+    df_constant.to_csv("../../../data/human/c1.1/mouselab-mdp.csv", sep=",", index=False)
+
 
 def save_to_df(participant_dict, name_mapping):
     """
@@ -122,8 +171,9 @@ def save_to_df(participant_dict, name_mapping):
     df = df.rename(columns=name_mapping)
 
     df = replace_trialtype_tomouselab(df)
-    print(df)
-    df.to_csv("mouselab-mdp.csv", sep=",", index=False)
+    split_mouselab_df_into_conditions(df)
+    #df.to_csv("mouselab-mdp.csv", sep=",", index=False)
+    return df
 
 
 def replace_trialtype_tomouselab(data):
@@ -143,6 +193,8 @@ name_mapping = {"actionTimes": "action_time",
                 "queries": "queries",
                 "rewards": "reward",
                 "rt": "rt",
+                "condition": "condition",
+                "bonus": "bonus",
                 "score": "score",
                 "simulationMode": "simulation_mode",
                 "stateRewards": "state_rewards",
@@ -157,9 +209,11 @@ keyworddict = {"actionTimes": 3,
                "actions": 3,
                "block": 1,
                "path": 4,
-               "queries": 1,  # todo: not sure about queries
+               "queries": 1,
                "rewards": 3,
                "rt": 3,
+               "condition": 1,
+               "bonus": 1,
                "score": 1,
                "simulationMode": 3,
                "stateRewards": 13,
@@ -168,7 +222,16 @@ keyworddict = {"actionTimes": 3,
                "trial_time": 1,
                "trial_type": 1}
 
-# keyworddict = {"queries": 13}
-
+### create mouselab csv
 participants_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=2)
-save_to_df(participants_dict, name_mapping)
+df = save_to_df(participants_dict, name_mapping)
+
+### create participants csv
+# get bonus information from mouselab df and add this to the participants csv
+bonus_temp = df.groupby(['pid']).sum()
+data_participants = data[["status", "beginexp", "cond"]]
+data_participants['bonus'] = bonus_temp['bonus']
+
+# create csv
+split_participants_df_into_conditions(data_participants)
+

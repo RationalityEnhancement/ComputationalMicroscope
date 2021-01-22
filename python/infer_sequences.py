@@ -13,11 +13,8 @@ if __name__ == "__main__":
 
     # Initializations
     strategy_space = pickle_load("data/strategy_space.pkl")
-    #print("STRATEGY", strategy_space)
     features = pickle_load("data/microscope_features.pkl")
-    #print("FEATUZRES", features)
     strategy_weights = pickle_load("data/microscope_weights.pkl")
-    #print("WEIGHTS", strategy_weights)
     num_features = len(features)
     exp_pipelines = pickle_load("data/exp_pipelines.pkl")  # list of all experiments, e.g. v1.0
     exp_reward_structures = {'increasing_variance': 'high_increasing',
