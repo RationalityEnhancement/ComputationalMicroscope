@@ -23,7 +23,7 @@ if __name__ == "__main__":
                              'transfer_task': 'large_increasing'}
 
     reward_exps = {"increasing_variance": "v1.0",
-                   "decreasing_variance": "c2.1_dec",
+                   "decreasing_variance": "c2.1",
                    "constant_variance": "c1.1",
                    "transfer_task": "T1.1"}
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     W = get_modified_weights(strategy_space, strategy_weights)
     cm = ComputationalMicroscope(pipeline, strategy_space, W, features, normalized_features=normalized_features)
     pids = None
-    if exp_num == "c2.1_dec":
+    if exp_num == "c2.1":
         exp = Experiment("c2.1", cm=cm, pids=pids, block=block, variance=2442)
     else:
         exp = Experiment(exp_num, cm=cm, pids=pids, block=block)

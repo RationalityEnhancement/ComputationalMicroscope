@@ -37,6 +37,7 @@ class Participant():
         self.clicks = [q['click']['state']['target'] for q in data.queries]
         self.modify_clicks()
         self.envs = [[0] + sr[1:] for sr in data.state_rewards]
+        #print(data)
         columns = list(data.columns).copy()
         columns_to_remove = ['pid', 'queries', 'state_rewards']
         # make it list of rewards
@@ -78,10 +79,9 @@ class Experiment():
         if pids:
             self.pids = pids
         else:
-            if hasattr(self.data, 'pids'):
-                self.pids = self.data['pids']
+            if hasattr(self.data, 'pid'):
+                self.pids = self.data['pid']
             else:
-                print("GOT HERE 9")
                 self.pids = sorted(np.unique(self.data['participants']['pid']).tolist())
         self.participants = {}
         if block:
@@ -117,7 +117,6 @@ class Experiment():
                 p_trials_data = p_trials_data[(p_trials_data.pid == pid)]
             else:
                 p_trials_data = p_trials_data[(p_trials_data.pid == pid) & (p_trials_data.block == self.block)]
-
             p = Participant(pid, condition)  # a class
             trial_nums.append(len(p_trials_data))
             p.attach_trial_data(p_trials_data)
@@ -140,7 +139,7 @@ class Experiment():
         if precomputed_strategies:
             for pid in precomputed_strategies.keys():
                 if show_pids:
-                    print(pid)
+                    print("SHOW PID", pid)
                 try:
                     S = precomputed_strategies[pid]
                     self.participants[pid].attach_strategies(S)
@@ -728,7 +727,6 @@ class Experiment():
         self.infer_strategies(precomputed_strategies=precomputed_strategies,
                               precomputed_temperatures=precomputed_temperatures,
                               max_evals=max_evals, show_pids=show_pids)
-        print("GET HERE 6", self.pids)
         if show_strategies:
             print("\n", dict(self.participant_strategies), "\n")
         self.init_feature_properties(features, normalized_features, strategy_weights)

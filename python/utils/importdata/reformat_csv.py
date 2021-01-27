@@ -6,7 +6,7 @@ import numpy as np
 import json
 
 
-data = pd.read_csv("data/dataclips2.csv", sep=';')
+data = pd.read_csv("data/dataclips.csv", sep=',')
 
 # remove unfinished data entries
 data['endhit'].replace('', np.nan, inplace=False)
@@ -24,9 +24,9 @@ def split_participants_df_into_conditions(df):
     Returns:
 
     """
-    df_increasing = df[df['cond'] == 0]
-    df_decreasing = df[df['cond'] == 1]
-    df_constant = df[df['cond'] == 2]
+    df_increasing = df[df['condition'] == 0]
+    df_decreasing = df[df['condition'] == 1]
+    df_constant = df[df['condition'] == 2]
 
     df_increasing.to_csv("../../../data/human/v1.0/participants.csv", sep=",", index=False)
     df_decreasing.to_csv("../../../data/human/c2.1/participants.csv", sep=",", index=False)
@@ -60,7 +60,7 @@ def flatten(d, sep="_"):
     return obj
 
 
-def get_queries(dict):
+def get_queries(dict, keyword_trial, keyword_query):
     """
     Function to get information on column queries and save as dict
     Args:
@@ -72,9 +72,9 @@ def get_queries(dict):
     data = dict.get("data")
     queries_data = []
     for row in data:
-        trialdata = row.get("trialdata")
-        if "queries" in trialdata:
-            queries = trialdata.get("queries")
+        trialdata = row.get(keyword_trial)
+        if keyword_query in trialdata:
+            queries = trialdata.get(keyword_query)
             queries_data.append(queries)
     return queries_data
 
@@ -91,7 +91,7 @@ def format_json(df, col_name, keyword_dict, no_trials):
     Returns:
 
     """
-    participant_dict = {}
+    mouselab_dict = {}
     for index, row in df.iterrows():
         data_dict_raw = json.loads(row[col_name])
         data_dict = flatten(data_dict_raw)
@@ -104,10 +104,9 @@ def format_json(df, col_name, keyword_dict, no_trials):
                 reward_key_list = []
                 reward_value_list = []
                 if keyword_name == "queries":
-                    queries = get_queries(data_dict_raw)
+                    queries = get_queries(data_dict_raw, "trialdata", "queries")
                     for row in queries:
                         reward_value_list.append(row)
-
                 else:
                     # create dict for all keywords
                     for key_reward in data_dict.keys():
@@ -116,12 +115,15 @@ def format_json(df, col_name, keyword_dict, no_trials):
                     for key_reward in reward_key_list:
                         reward_value_list.append(data_dict.get(key_reward))
 
-                all_rewards_dict[keyword_name] = reward_value_list[
-                                                 (keyword_len * trial_id):(keyword_len * (trial_id + 1))]
+                if keyword_name == "condition":
+                    all_rewards_dict[keyword_name] = reward_value_list
+                else:
+                    all_rewards_dict[keyword_name] = reward_value_list[
+                                                     (keyword_len * trial_id):(keyword_len * (trial_id + 1))]
 
             trial_dict[trial_id] = all_rewards_dict
-        participant_dict[index] = trial_dict
-    return participant_dict
+        mouselab_dict[index] = trial_dict
+    return mouselab_dict
 
 def split_mouselab_df_into_conditions(df):
     """
@@ -170,15 +172,24 @@ def save_to_df(participant_dict, name_mapping):
     # change the name of the dataframe
     df = df.rename(columns=name_mapping)
 
+    #print(df['condition'])
     df = replace_trialtype_tomouselab(df)
     split_mouselab_df_into_conditions(df)
-    #df.to_csv("mouselab-mdp.csv", sep=",", index=False)
+    df.to_csv("mouselab-mdp_all.csv", sep=",", index=False)
     return df
 
 
 def replace_trialtype_tomouselab(data):
     data['trial_type'] = 'mouselab-mdp'
     return data
+
+def copy_same_condition_for_all_trials():
+    """
+    The raw csv returns the row condition only for the first trials. This needs to be copied to all trials
+    Returns:
+
+    """
+    return
 
 # load data
 data_mouselab = data[["datastring"]]
@@ -222,18 +233,18 @@ keyworddict = {"actionTimes": 3,
                "trial_time": 1,
                "trial_type": 1}
 
-
-participants_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=2)
-df = save_to_df(participants_dict, name_mapping)
-
+# don't forget to change trial index
+mouselab_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=20)
+df = save_to_df(mouselab_dict, name_mapping)
+print(df)
 # create participants csv
 # get bonus information from mouselab df and add this to the participants csv
 bonus_temp = df.groupby(['pid']).sum()
 data_participants = data[["status", "beginexp", "cond"]]
 data_participants['pid'] = bonus_temp.index
 data_participants['bonus'] = bonus_temp['bonus']
-
+data_participants = data_participants.rename(columns={"cond": "condition"})
 
 split_participants_df_into_conditions(data_participants)
-#data_participants.to_csv("participants.csv", index=True, index_label="pid")
+data_participants.to_csv("participants_all.csv", index=True, index_label="pid")
 

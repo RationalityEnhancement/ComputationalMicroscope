@@ -172,7 +172,7 @@ class ComputationalMicroscope():
                 S, _, _, T = self.infer_sequences(clicks, envs, fit_strategy_temperature=fit_strategy_temperature, max_evals=max_evals)
                 strategies[pid] = S
                 temperatures[pid] = T
-                print(S, T)
+                print("S AND T", S, T)
         return strategies, temperatures
 
 def get_modified_vals(strategy_space, distances, weights):

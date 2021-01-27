@@ -60,8 +60,8 @@ if __name__ == "__main__":
         strategies = pickle_load(f"{dir_path}/strategies.pkl")
         temperatures = pickle_load(f"{dir_path}/temperatures.pkl")
     except Exception as e:
-        print(e)
-        exit()
+        print("Exception", e)
+        #exit()
     exp.summarize(features, normalized_features, strategy_weights,
                 decision_systems, W_DS, DS_proportions, strategy_scores, 
                 cluster_scores, cluster_map, precomputed_strategies=strategies,
