@@ -7,9 +7,9 @@ import seaborn as sns
 from collections import defaultdict, Counter
 from sklearn.cluster import KMeans
 from statsmodels.stats.proportion import proportions_chisquare
-from python.utils.analysis_utils import get_data
-from sequence_utils import get_acls
-from learning_utils import sidak_value
+from .analysis_utils import get_data
+from .sequence_utils import get_acls
+from .learning_utils import sidak_value
 
 # Matplotlib no grid
 plt.rcParams["axes.grid"] = False

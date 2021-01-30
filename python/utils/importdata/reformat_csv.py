@@ -172,7 +172,6 @@ def save_to_df(participant_dict, name_mapping):
     # change the name of the dataframe
     df = df.rename(columns=name_mapping)
 
-    #print(df['condition'])
     df = replace_trialtype_tomouselab(df)
     split_mouselab_df_into_conditions(df)
     df.to_csv("mouselab-mdp_all.csv", sep=",", index=False)
@@ -234,11 +233,12 @@ keyworddict = {"actionTimes": 3,
                "trial_type": 1}
 
 # don't forget to change trial index
-mouselab_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=20)
+mouselab_dict = format_json(data_mouselab, "datastring", keyword_dict=keyworddict, no_trials=35)
 df = save_to_df(mouselab_dict, name_mapping)
-print(df)
+
 # create participants csv
 # get bonus information from mouselab df and add this to the participants csv
+df["bonus"] = pd.to_numeric(df["bonus"])
 bonus_temp = df.groupby(['pid']).sum()
 data_participants = data[["status", "beginexp", "cond"]]
 data_participants['pid'] = bonus_temp.index

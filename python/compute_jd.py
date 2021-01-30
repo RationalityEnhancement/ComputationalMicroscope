@@ -1,9 +1,9 @@
 import sys
 import numpy as np
-from generic_mouselab import GenericMouselabEnv
-from python.learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
+from python.env.generic_mouselab import GenericMouselabEnv
+from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
                     get_modified_weights
-from sequence_utils import compute_log_likelihood
+from python.utils.sequence_utils import compute_log_likelihood
 
 
 def get_strategy_weights(weights_path, num_features, num_strategies):

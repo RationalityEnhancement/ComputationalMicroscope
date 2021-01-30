@@ -1,8 +1,8 @@
 import sys
-from generic_mouselab import GenericMouselabEnv
-from python.learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
+from python.env.generic_mouselab import GenericMouselabEnv
+from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features, create_dir, \
                     get_modified_weights
-from sequence_utils import get_clicks
+from python.utils.sequence_utils import get_clicks
 
 
 def gen_envs(pipeline):

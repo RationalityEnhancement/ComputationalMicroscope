@@ -8,8 +8,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
 from scipy.stats import gamma
-from python.utils.analysis_utils import get_data
-from distributions import Categorical, Normal
+from utils.analysis_utils import get_data
+from .distributions import Categorical, Normal
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy.cluster.hierarchy import fcluster, linkage, dendrogram
 from scipy.spatial.distance import squareform
@@ -57,7 +57,7 @@ def create_dir(file_path):
         os.makedirs(file_path)
 
 
-implemented_features = pickle_load(f"data/implemented_features.pkl")
+#implemented_features = pickle_load(f"/data/implemented_features.pkl")
 
 
 def pickle_save(obj, file_path):

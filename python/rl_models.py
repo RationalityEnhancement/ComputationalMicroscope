@@ -8,14 +8,14 @@ import seaborn as sns
 import inspect
 from torch import autograd
 from torch.autograd import Variable
-from python.learning_utils import *
+from python.utils.learning_utils import *
 from torch.distributions import Categorical
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from hyperopt import hp, fmin, tpe, Trials
 from functools import partial
-from generic_mouselab import GenericMouselabEnv
-from sequence_utils import compute_log_likelihood, get_clicks
+from python.env.generic_mouselab import GenericMouselabEnv
+from python.utils.sequence_utils import compute_log_likelihood, get_clicks
 from scipy.stats import norm
 from scipy.special import logsumexp
 from functools import lru_cache

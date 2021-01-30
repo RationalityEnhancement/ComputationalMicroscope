@@ -1,5 +1,5 @@
 import sys
-from python.learning_utils import pickle_load, pickle_save, get_normalized_features,\
+from python.utils.learning_utils import pickle_load, pickle_save, get_normalized_features,\
                             get_modified_weights, create_dir
 from computational_microscope import ComputationalMicroscope
 from python.utils import get_data

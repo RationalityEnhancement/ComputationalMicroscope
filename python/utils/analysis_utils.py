@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import re
 import os
-
+from toolz.curried import *
 from utils import *
 
 # ---------- Data wrangling ---------- #
