@@ -1,8 +1,8 @@
 import numpy as np
 import operator
 from scipy.special import softmax, logsumexp
-from learning_utils import get_normalized_feature_values, get_counts
-from modified_mouselab import TrialSequence
+from python.utils.learning_utils import get_normalized_feature_values, get_counts
+from python.data.modified_mouselab import TrialSequence
 from generic_mouselab import GenericMouselabEnv
 from planning_strategies import strategy_dict
 

@@ -7,7 +7,7 @@ import seaborn as sns
 from collections import defaultdict, Counter
 from sklearn.cluster import KMeans
 from statsmodels.stats.proportion import proportions_chisquare
-from analysis_utils import get_data
+from python.utils.analysis_utils import get_data
 from sequence_utils import get_acls
 from learning_utils import sidak_value
 
@@ -37,7 +37,7 @@ class Participant():
         self.clicks = [q['click']['state']['target'] for q in data.queries]
         self.modify_clicks()
         self.envs = [[0] + sr[1:] for sr in data.state_rewards]
-        #print(data)
+        # print(data)
         columns = list(data.columns).copy()
         columns_to_remove = ['pid', 'queries', 'state_rewards']
         # make it list of rewards
@@ -96,8 +96,13 @@ class Experiment():
         participants_data = self.data['participants']  # get the participants csv
         self.conditions = set()
         for constraint in self.additional_constraints.keys():
-            participants_data = participants_data[
-                participants_data[constraint] == self.additional_constraints[constraint]]
+            print("HERE 1", constraint) #variance
+            print("HERE 2", self.additional_constraints[constraint]) #2442
+            print(participants_data)
+            print(self.additional_constraints[constraint])
+            print(participants_data[constraint])
+            #print("HERE 3", participants_data[constraint])
+            participants_data = participants_data[participants_data[constraint] == self.additional_constraints[constraint]]
             pids = participants_data['pid'].tolist()
             self.pids = [p for p in pids if p in self.pids]
         trial_nums = []
