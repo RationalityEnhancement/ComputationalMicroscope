@@ -10,6 +10,7 @@ data = pd.read_csv("data/dataclips.csv", sep=',')
 
 # remove unfinished data entries
 data['endhit'].replace('', np.nan, inplace=False)
+data['hitid'].replace('HIT_ID', np.nan, inplace=False)
 data.dropna(subset=['endhit'], inplace=True)
 data = data.reset_index(drop=True)
 # data.drop(index=0, inplace=True) #drops first row
@@ -28,9 +29,9 @@ def split_participants_df_into_conditions(df):
     df_decreasing = df[df['condition'] == 1]
     df_constant = df[df['condition'] == 2]
 
-    df_increasing.to_csv("../../../data/human/v1.0/participants.csv", sep=",", index=False)
-    df_decreasing.to_csv("../../../data/human/c2.1/participants.csv", sep=",", index=False)
-    df_constant.to_csv("../../../data/human/c1.1/participants.csv", sep=",", index=False)
+    df_increasing.to_csv("../human/v1.0/participants.csv", sep=",", index=False)
+    df_decreasing.to_csv("../human/c2.1/participants.csv", sep=",", index=False)
+    df_constant.to_csv("../human/c1.1/participants.csv", sep=",", index=False)
 
 def flatten(d, sep="_"):
     """
@@ -138,9 +139,9 @@ def split_mouselab_df_into_conditions(df):
     df_decreasing = df[df['condition'] == 1]
     df_constant = df[df['condition'] == 2]
 
-    df_increasing.to_csv("../../../data/human/v1.0/mouselab-mdp.csv", sep=",", index=False)
-    df_decreasing.to_csv("../../../data/human/c2.1/mouselab-mdp.csv", sep=",", index=False)
-    df_constant.to_csv("../../../data/human/c1.1/mouselab-mdp.csv", sep=",", index=False)
+    df_increasing.to_csv("../human/v1.0/mouselab-mdp.csv", sep=",", index=False)
+    df_decreasing.to_csv("../human/c2.1/mouselab-mdp.csv", sep=",", index=False)
+    df_constant.to_csv("../human/c1.1/mouselab-mdp.csv", sep=",", index=False)
 
 
 def save_to_df(participant_dict, name_mapping):
