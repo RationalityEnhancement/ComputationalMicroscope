@@ -8,7 +8,11 @@ sys.modules["distributions"] = distributions
 from computational_microscope import ComputationalMicroscope
 from utils.experiment_utils import Experiment
 
-# Run this file to analyse the sequence after the sequence has been infered
+"""
+Run this file to analyse the inferred sequences of the participants. 
+Format: python3 analyze_sequences.py <reward_structure> <block> <pid>
+Example: python3 analyze_sequences.py increasing_variance training none
+"""
 
 if __name__ == "__main__":
     reward_structure = sys.argv[1]
@@ -74,3 +78,5 @@ if __name__ == "__main__":
                   cluster_scores, cluster_map, precomputed_strategies=strategies,
                   precomputed_temperatures=temperatures,
                   show_pids=False)
+
+# todo: somehow this script causes python to crash/exit itself.

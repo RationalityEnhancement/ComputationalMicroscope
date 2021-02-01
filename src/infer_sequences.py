@@ -7,13 +7,20 @@ sys.modules["distributions"] = distributions
 from computational_microscope import ComputationalMicroscope
 from utils.experiment_utils import Experiment
 
+"""
+Run this file to infer the averaged(?) sequences of the participants. 
+Format: python3 infer_sequences.py <reward_structure> <block> <pid>
+Example: python3 infer_sequences.py increasing_variance training none
+"""
+
+
 if __name__ == "__main__":
-    # reward_structure = sys.argv[1]  # increasing_variance, decreasing_variance
-    # block = None
-    # if len(sys.argv) > 2:
-    #     block = sys.argv[2]
-    reward_structure = "increasing_variance"
-    block = "training"
+    reward_structure = sys.argv[1]  # increasing_variance, decreasing_variance
+    block = None
+    if len(sys.argv) > 2:
+        block = sys.argv[2]
+    # reward_structure = "increasing_variance"
+    # block = "training"
 
 
     # Initializations
@@ -51,7 +58,7 @@ if __name__ == "__main__":
         exp = Experiment(exp_num, cm=cm, pids=pids, block=block)
     exp.infer_strategies(max_evals=2, show_pids=True)
 
-    save_path = f"results/inferred_strategies/{reward_structure}"
+    save_path = f"../results/inferred_strategies/{reward_structure}"
     if block:
         save_path += f"_{block}"
     learning_utils.create_dir(save_path)

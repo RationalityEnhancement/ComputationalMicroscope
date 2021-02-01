@@ -143,7 +143,7 @@ cython_debug/
 
 *.idea
 
-# project specific
+# project specificˆ
 mturk_secret_key.py
 
 *.pdf
@@ -151,6 +151,8 @@ mturk_secret_key.py
 *.png
 #*.pkl
 *.json
+
+.ipynb_checkpoints/*
 
 # the file to create cloudresearch keys
 create_mturk_secret_key.py
