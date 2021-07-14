@@ -421,6 +421,8 @@ class Experiment():
             decision_systems = self.participants[pid].decision_systems
             ds_prop = self.participants[pid].decision_system_proportions
             DSP.append(ds_prop)
+            if len(ds_prop) == num_trials:
+                DSP.append(ds_prop)
         # decision_system_labels = [" ".join([s.capitalize() for s in d.split("_")]) for d in decision_systems]
         decision_system_labels = ["Mental effort avoidance", "Model-based Metareasoning",
                                   "Model-free values and heuristics",
