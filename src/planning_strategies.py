@@ -3,8 +3,14 @@ from queue import PriorityQueue
 from env.modified_mouselab import TrialSequence, approx_max
 from numpy import argsort
 
-""" This file contains the 89 algorithmic strategies implemented for
-    'Measuring how people learn how to plan'
+""" This file contains a total of 89 strategies out of which 79 are being
+    used for the manuscript. The set of strategies being used is given in
+    "data/strategy_space.pkl". The numbers in the appendix and here, therefore
+    don't match. The mapping of strategy numbers in the appendix to strategy
+    numbers here is given by "data/si_strategy_map.pkl" and the inverse in
+    "strategy_si_map.pkl". The strategy names according to the Appendix are
+    present in "si_strategy_names.pkl" and the cluster names are present in
+    "cluster_names.pkl".
 """
 
 strategy_dict = {}
