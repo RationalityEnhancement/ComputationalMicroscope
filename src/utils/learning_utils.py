@@ -8,7 +8,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
 from scipy.stats import gamma
-from utils.analysis_utils import get_data
+from .analysis_utils import get_data
 from .distributions import Categorical, Normal
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy.cluster.hierarchy import fcluster, linkage, dendrogram

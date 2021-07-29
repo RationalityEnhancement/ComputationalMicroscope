@@ -1,17 +1,18 @@
 import numpy as np
 import pandas as pd
+import os
+os.environ['R_HOME'] = '/Library/Frameworks/R.framework/Resources'
 import operator
 from collections import Counter
-from experiment_utils import Experiment
-from analysis_utils import get_data
-from learning_utils import pickle_load, get_normalized_features
+from .experiment_utils import Experiment
+from .analysis_utils import get_data
+from .learning_utils import pickle_load, get_normalized_features
 from scipy.stats import ttest_ind
 import rpy2.robjects as robjects
 from rpy2.robjects import r, pandas2ri
 from rpy2.robjects.packages import importr
 pandas2ri.activate()
-BayesFactor = importr('BayesFactor')
-
+#BayesFactor = importr('BayesFactor')
 cluster_map = pickle_load("data/kl_cluster_map.pkl")
 
 def bayesfactor(f, s):

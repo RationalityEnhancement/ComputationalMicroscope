@@ -437,7 +437,7 @@ class Experiment():
         # plt.title("Decision system proportions", fontsize=24)
         plt.ylim(top=np.max(mean_dsw) + 0.2)
         plt.legend(prop={'size': 22}, ncol=2, loc='upper center')
-        plt.savefig(f"../results/{self.exp_num}_decision_plots_{suffix}.pdf", bbox_inches='tight')
+        plt.savefig(f"results/{self.exp_num}_decision_plots_{suffix}.pdf", bbox_inches='tight')
 
     def get_proportions(self, strategies, trial_wise=False):
         strategies_list = [strategies[pid] for pid in self.pids]
@@ -562,9 +562,9 @@ class Experiment():
         else:
             plt.legend(prop={'size': 22}, loc='upper center', ncol=2)
         if cluster:
-            plt.savefig(f"../results/{self.exp_num}_cluster_proportions_{suffix}.pdf", bbox_inches='tight')
+            plt.savefig(f"results/{self.exp_num}_cluster_proportions_{suffix}.pdf", bbox_inches='tight')
         else:
-            plt.savefig(f"../results/{self.exp_num}_strategy_proportions_{suffix}.pdf", bbox_inches='tight')
+            plt.savefig(f"results/{self.exp_num}_strategy_proportions_{suffix}.pdf", bbox_inches='tight')
         plt.show()
 
     def plot_strategy_proportions(self, S, suffix="", labels=None):

@@ -1,9 +1,9 @@
 import numpy as np
 import operator
 from scipy.special import softmax, logsumexp
-from learning_utils import get_normalized_feature_values, get_counts
-from modified_mouselab import TrialSequence
-from generic_mouselab import GenericMouselabEnv
+from utils.learning_utils import get_normalized_feature_values, get_counts
+from env.modified_mouselab import TrialSequence
+from env.generic_mouselab import GenericMouselabEnv
 from planning_strategies import strategy_dict
 
 def get_accuracy_position(position, ground_truth, clicks, pipeline, features, normalized_features, W):
